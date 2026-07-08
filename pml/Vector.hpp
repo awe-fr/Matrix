@@ -21,6 +21,28 @@ namespace pml {
                 return vecSize;
             }
 
+            // -- functions for vector operations
+
+            void add(const vec &other) {
+                for (size_t i = 0; i < vecSize; i++) {
+                    data[i] += other.data[i];
+                }
+            }
+
+            void sub(const vec &other) {
+                for (size_t i = 0; i < vecSize; i++) {
+                    data[i] -= other.data[i];
+                }
+            }
+
+            void scl(const T scalar) {
+                for (size_t i = 0; i < vecSize; i++) {
+                    data[i] *= scalar;
+                }
+            }
+
+            // -- operator overloads
+
             vec& operator=(std::initializer_list<T> content) {
                 if (content.size() != vecSize) {
                     throw std::invalid_argument("Number of elements must match the vector size.");
@@ -30,7 +52,68 @@ namespace pml {
                 
                 return *this;
             }
+
+            vec& operator=(const std::vector<T>& content) {
+                if (content.size() != vecSize) {
+                    throw std::invalid_argument("Number of elements must match the vector size.");
+                }
+                
+                data = content;
+                
+                return *this;
+            }
             
+            vec operator+(const vec &other) {
+                vec result;
+                std::vector<T> vecResult;
+
+                for (size_t i = 0; i < vecSize; i++) {
+                    vecResult.push_back(data[i] + other.data[i]);
+                }
+
+                result = vecResult;
+                return result;
+            }
+
+            vec& operator+=(const vec &other) {
+                add(other);
+                return *this;
+            }
+
+            vec operator-(const vec &other) {
+                vec result;
+                std::vector<T> vecResult;
+                
+                for (size_t i = 0; i < vecSize; i++) {
+                    vecResult.push_back(data[i] - other.data[i]);
+                }
+
+                result = vecResult;
+                return result;
+            }
+
+            vec& operator-=(const vec &other) {
+                sub(other);
+                return *this;
+            }
+
+            vec operator*(const T scalar) {
+                vec result;
+                std::vector<T> vecResult;
+                
+                for (size_t i = 0; i < vecSize; i++) {
+                    vecResult.push_back(data[i] * scalar);
+                }
+
+                result = vecResult;
+                return result;
+            }
+
+            vec& operator*=(const T scalar) {
+                scl(scalar);
+                return *this;
+            }
+
             friend std::ostream& operator<<(std::ostream& os, const pml::vec<T, vecSize>& tp) {
                 for (size_t i = 0; i < vecSize; i++) {
                     if (i != 0) {
