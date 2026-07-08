@@ -1,13 +1,12 @@
-NAME = matrix.a
+NAME = matrix
 
-SOURCES = ./sources/Vector.cpp
+SOURCES = main.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 
-INCLUDES = -Iincludes
+INCLUDES = -Ipml
 
-COMPILER = c++
-LIBCOMPILER = ar rcs
+COMPILER = c++ -std=c++20
 
 FLAGS = -Wall -Wextra -Werror -g3
 
@@ -16,7 +15,7 @@ RM = rm -f
 all:		$(NAME)
 
 $(NAME):	$(OBJECTS)
-			$(LIBCOMPILER) $(NAME) $(OBJECTS)
+			$(COMPILER) $(FLAGS) $(OBJECTS) -o $(NAME)
 
 %.o: %.cpp
 			$(COMPILER) -c $(FLAGS) $(INCLUDES) $< -o $@
