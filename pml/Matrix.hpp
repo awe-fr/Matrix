@@ -32,6 +32,19 @@ namespace pml {
                 }
 
             }
+            mat(std::vector<std::vector<T>> content) {
+                if (content.size() != matRowsSize) {
+                    throw std::invalid_argument("Number of rows must match the matrix size.");
+                }
+
+                for (const auto& row : content) {
+                    if (row.size() != matColsSize) {
+                        throw std::invalid_argument("Number of columns must match the matrix size.");
+                    }
+                }
+
+                data = std::move(content);
+            }
 
             size_t  RowsSize() const noexcept  {
                 return matRowsSize;
@@ -45,6 +58,33 @@ namespace pml {
                 return matRowsSize * matColsSize;
             }
 
+            // -- functions for matrix operations
+
+            void add(const mat &other) {
+                for (size_t i = 0; i < matRowsSize; i++) {
+                    for (size_t j = 0; j < matColsSize; j++) {
+                        data[i][j] += other.data[i][j];
+                    }
+                }
+            }
+
+            void sub(const mat &other) {
+                for (size_t i = 0; i < matRowsSize; i++) {
+                    for (size_t j = 0; j < matColsSize; j++) {
+                        data[i][j] -= other.data[i][j];
+                    }
+                }
+            }
+
+            void scl(const T scalar) {
+                for (size_t i = 0; i < matRowsSize; i++) {
+                    for (size_t j = 0; j < matColsSize; j++) {
+                        data[i][j] *= scalar;
+                    }
+                }
+            }
+
+            // -- operator overloads
             mat& operator=(std::initializer_list<std::initializer_list<T>> content) {
                 if (content.size() != matRowsSize) {
                     throw std::invalid_argument("Number of rows must match the matrix size.");
@@ -65,15 +105,62 @@ namespace pml {
                 return *this;
             }
 
-            friend std::ostream& operator<<(std::ostream& os, const pml::mat<T, matRowsSize, matColsSize>& tp) {
-                for (size_t i = 0; i < matRowsSize; i++) {
-                    if (i != 0) {
-                        os << " ";
+            mat& operator=(std::vector<std::vector<T>> content) {
+                if (content.size() != matRowsSize) {
+                    throw std::invalid_argument("Number of rows must match the matrix size.");
+                }
+
+                for (const auto& row : content) {
+                    if (row.size() != matColsSize) {
+                        throw std::invalid_argument("Number of columns must match the matrix size.");
                     }
-                    for (size_t j = 0; j < matColsSize; j++) {
-                        if (i != 0 && j == 0) {
-                            os << std::endl;
-                        } else if (j != 0) {
+                }
+
+                data = std::move(content);
+
+                return *this;
+            }
+
+            mat operator+(const mat &other) {
+                mat result(*this);
+                result.add(other);
+                return result;
+            }
+
+            mat& operator+=(const mat &other) {
+                add(other);
+                return *this;
+            }
+
+            mat operator-(const mat &other) {
+                mat result(*this);
+                result.sub(other);
+                return result;
+            }
+
+            mat& operator-=(const mat &other) {
+                sub(other);
+                return *this;
+            }
+
+            mat operator*(const T scalar) {
+                mat result(*this);
+                result.scl(scalar);
+                return result;
+            }
+
+            mat& operator*=(const T scalar) {
+                scl(scalar);
+                return *this;
+            }
+
+            friend std::ostream& operator<<(std::ostream& os, const pml::mat<T, matRowsSize, matColsSize>& tp) {
+                for (size_t j = 0; j < matColsSize; j++) {
+                    if (j != 0) {
+                        os << std::endl;
+                    }
+                    for (size_t i = 0; i < matRowsSize; i++) {
+                        if (i != 0) {
                             os << " ";
                         }
                         os << tp.data[i][j];

@@ -16,6 +16,12 @@ namespace pml {
                 }
                 data = std::vector<T>(content.begin(), content.end());
             }
+            vec(std::vector<T> content) {
+                if (content.size() != vecSize) {
+                    throw std::invalid_argument("Number of elements must match the vector size.");
+                }
+                data = std::move(content);
+            }
 
             size_t  size() const noexcept  {
                 return vecSize;
@@ -58,20 +64,14 @@ namespace pml {
                     throw std::invalid_argument("Number of elements must match the vector size.");
                 }
                 
-                data = content;
+                data = std::move(content);
                 
                 return *this;
             }
             
             vec operator+(const vec &other) {
-                vec result;
-                std::vector<T> vecResult;
-
-                for (size_t i = 0; i < vecSize; i++) {
-                    vecResult.push_back(data[i] + other.data[i]);
-                }
-
-                result = vecResult;
+                vec result(*this);
+                result.add(other);
                 return result;
             }
 
@@ -81,14 +81,8 @@ namespace pml {
             }
 
             vec operator-(const vec &other) {
-                vec result;
-                std::vector<T> vecResult;
-                
-                for (size_t i = 0; i < vecSize; i++) {
-                    vecResult.push_back(data[i] - other.data[i]);
-                }
-
-                result = vecResult;
+                vec result(*this);
+                result.sub(other);
                 return result;
             }
 
@@ -98,14 +92,8 @@ namespace pml {
             }
 
             vec operator*(const T scalar) {
-                vec result;
-                std::vector<T> vecResult;
-                
-                for (size_t i = 0; i < vecSize; i++) {
-                    vecResult.push_back(data[i] * scalar);
-                }
-
-                result = vecResult;
+                vec result(*this);
+                result.scl(scalar);
                 return result;
             }
 
