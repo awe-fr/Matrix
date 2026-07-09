@@ -2,20 +2,15 @@
 
 #include "Config.hpp"
 
-# include <concepts>
-# include <vector>
-
 namespace pml {
 
     template <Limit T, std::size_t matRowsSize, std::size_t matColsSize>
     struct mat {
-        friend std::ostream& operator<<(std::ostream& os, const pml::mat<T, matRowsSize, matColsSize>& tp);
-
         private:
             std::vector<std::vector<T>> data;
 
         public:
-            mat() = default;
+            mat() : data(matRowsSize, std::vector<T>(matColsSize, static_cast<T>(0))) {};
             mat(std::initializer_list<std::initializer_list<T>> content) {
                 if (content.size() != matRowsSize) {
                     throw std::invalid_argument("Number of rows must match the matrix size.");
