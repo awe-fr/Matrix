@@ -115,6 +115,25 @@ namespace pml {
             }
     };
 
+    // -- operator overloads
+
+    template <Limit T, size_t vecSize>
+    vec<T, vecSize> operator+(T scalar, const vec<T, vecSize>& v) {
+        return v + scalar;
+    }
+
+    template <Limit T, size_t vecSize>
+    vec<T, vecSize> operator-(T scalar, const vec<T, vecSize>& v) {
+        return v - scalar;
+    }
+
+    template <Limit T, size_t vecSize>
+    vec<T, vecSize> operator*(T scalar, const vec<T, vecSize>& v) {
+        return v * scalar;
+    }
+
+    // -- functions for vector operations
+
     template <Limit T, size_t vecSize>
     vec<T, vecSize> linear_combination(const std::vector<vec<T, vecSize>>& vectors, const std::vector<T>& scalars) {
         if (vectors.size() != scalars.size()) {
@@ -132,7 +151,7 @@ namespace pml {
     template <Limit T, size_t vecSize> 
     vec<T, vecSize> lerp(const vec<T, vecSize>& v1, const vec<T, vecSize>& v2, T scalar) {
         vec<T, vecSize> result;
-        result = v1 + (v2 - v1) * scalar;
+        result = v1 + scalar * (v2 - v1);
 
         return result;
     }

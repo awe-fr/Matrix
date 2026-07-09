@@ -167,6 +167,21 @@ namespace pml {
     };
 
     template <Limit T, std::size_t matRowsSize, std::size_t matColsSize>
+    mat<T, matRowsSize, matColsSize> operator+(T scalar, const mat<T, matRowsSize, matColsSize>& m) {
+        return m + scalar;
+    }
+
+    template <Limit T, std::size_t matRowsSize, std::size_t matColsSize>
+    mat<T, matRowsSize, matColsSize> operator-(T scalar, const mat<T, matRowsSize, matColsSize>& m) {
+        return m - scalar;
+    }
+
+    template <Limit T, std::size_t matRowsSize, std::size_t matColsSize>
+    mat<T, matRowsSize, matColsSize> operator*(T scalar, const mat<T, matRowsSize, matColsSize>& m) {
+        return m * scalar;
+    }
+
+    template <Limit T, std::size_t matRowsSize, std::size_t matColsSize>
     mat<T, matRowsSize, matColsSize> linear_combination(const std::vector<mat<T, matRowsSize, matColsSize>>& matrices, const std::vector<T>& scalars) {
         if (matrices.size() != scalars.size()) {
             throw std::invalid_argument("Number of matrices and scalars must match.");
@@ -183,7 +198,7 @@ namespace pml {
     template <Limit T, std::size_t matRowsSize, std::size_t matColsSize>
     mat<T, matRowsSize, matColsSize> lerp(const mat<T, matRowsSize, matColsSize>& m1, const mat<T, matRowsSize, matColsSize>& m2, T scalar) {
         mat<T, matRowsSize, matColsSize> result;
-        result = m1 + (m2 - m1) * scalar;
+        result = m1 + scalar * (m2 - m1);
 
         return result;
     }
