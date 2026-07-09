@@ -128,4 +128,12 @@ namespace pml {
 
         return result;
     }
+
+    template <Limit T, size_t vecSize> 
+    vec<T, vecSize> lerp(const vec<T, vecSize>& v1, const vec<T, vecSize>& v2, T scalar) {
+        vec<T, vecSize> result;
+        result = v1 + (v2 - v1) * scalar;
+
+        return result;
+    }
 }
