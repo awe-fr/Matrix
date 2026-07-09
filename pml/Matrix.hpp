@@ -166,6 +166,8 @@ namespace pml {
             }
     };
 
+    // -- operator overloads
+
     template <Limit T, std::size_t matRowsSize, std::size_t matColsSize>
     mat<T, matRowsSize, matColsSize> operator+(T scalar, const mat<T, matRowsSize, matColsSize>& m) {
         return m + scalar;
@@ -180,6 +182,8 @@ namespace pml {
     mat<T, matRowsSize, matColsSize> operator*(T scalar, const mat<T, matRowsSize, matColsSize>& m) {
         return m * scalar;
     }
+
+    // -- functions for matrix operations
 
     template <Limit T, std::size_t matRowsSize, std::size_t matColsSize>
     mat<T, matRowsSize, matColsSize> linear_combination(const std::vector<mat<T, matRowsSize, matColsSize>>& matrices, const std::vector<T>& scalars) {
