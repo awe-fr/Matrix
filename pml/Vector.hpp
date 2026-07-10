@@ -6,22 +6,22 @@ namespace pml {
 
     template <Limit T, size_t vecSize>
     struct vec {
-        private:
-            std::vector<T> data;
+            T data[vecSize];
         
-        public:
-            vec() : data(vecSize, static_cast<T>(0)) {};
+            vec() {
+                for (size_t i = 0; i < vecSize; i++) {
+                    data[i] = static_cast<T>(0);
+                }
+            }
             vec(std::initializer_list<T> content) {
                 if (content.size() != vecSize) {
                     throw std::invalid_argument("Number of elements must match the vector size.");
                 }
-                data = std::vector<T>(content.begin(), content.end());
-            }
-            vec(std::vector<T> content) {
-                if (content.size() != vecSize) {
-                    throw std::invalid_argument("Number of elements must match the vector size.");
+
+                size_t i = 0;
+                for (const T& value : content) {
+                    data[i++] = value;
                 }
-                data = std::move(content);
             }
 
             size_t  size() const noexcept  {
@@ -55,21 +55,14 @@ namespace pml {
                     throw std::invalid_argument("Number of elements must match the vector size.");
                 }
                 
-                data = std::vector<T>(content.begin(), content.end());
-                
-                return *this;
-            }
-
-            vec& operator=(const std::vector<T>& content) {
-                if (content.size() != vecSize) {
-                    throw std::invalid_argument("Number of elements must match the vector size.");
+                size_t i = 0;
+                for (const T& value : content) {
+                    data[i++] = value;
                 }
                 
-                data = std::move(content);
-                
                 return *this;
             }
-            
+         
             vec operator+(const vec &other) const {
                 vec result(*this);
                 result.add(other);
@@ -134,25 +127,30 @@ namespace pml {
 
     // -- functions for vector operations
 
-    template <Limit T, size_t vecSize>
-    vec<T, vecSize> linear_combination(const std::vector<vec<T, vecSize>>& vectors, const std::vector<T>& scalars) {
-        if (vectors.size() != scalars.size()) {
-            throw std::invalid_argument("Number of vectors and scalars must match.");
-        }
-
+    template <Limit T, size_t vecSize, size_t length>
+    vec<T, vecSize> linear_combination(const vec<T, vecSize> (&vectors)[length], const T (&scalars)[length]) {
         vec<T, vecSize> result;
-        for (size_t i = 0; i < vectors.size(); i++) {
+        for (size_t i = 0; i < length; i++) {
             result += vectors[i] * scalars[i];
         }
 
         return result;
     }
 
-    template <Limit T, size_t vecSize> 
+    template <Limit T, size_t vecSize>
     vec<T, vecSize> lerp(const vec<T, vecSize>& v1, const vec<T, vecSize>& v2, T scalar) {
         vec<T, vecSize> result;
         result = v1 + scalar * (v2 - v1);
 
+        return result;
+    }
+
+    template <Limit T, size_t vecSize>
+    T dot(const vec<T, vecSize>& v1, const vec<T, vecSize>& v2) {
+        T result = static_cast<T>(0);
+        for (size_t i = 0; i < vecSize; i++) {
+            result += v1.data[i] * v2.data[i];
+        }
         return result;
     }
 }

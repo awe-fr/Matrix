@@ -4,41 +4,36 @@
 
 namespace pml {
 
-    template <Limit T, std::size_t matRowsSize, std::size_t matColsSize>
+    template <Limit T, size_t matRowsSize, size_t matColsSize>
     struct mat {
-        private:
-            std::vector<std::vector<T>> data;
+            T data[matRowsSize][matColsSize];
 
-        public:
-            mat() : data(matRowsSize, std::vector<T>(matColsSize, static_cast<T>(0))) {};
+            mat() {
+                for (size_t i = 0; i < matRowsSize; i++) {
+                    for (size_t j = 0; j < matColsSize; j++) {
+                        data[i][j] = static_cast<T>(0);
+                    }
+                }
+            }
             mat(std::initializer_list<std::initializer_list<T>> content) {
                 if (content.size() != matRowsSize) {
                     throw std::invalid_argument("Number of rows must match the matrix size.");
                 }
 
-                data.reserve(matRowsSize);
-
+                size_t i = 0;
                 for (const auto& row : content) {
                     if (row.size() != matColsSize) {
                         throw std::invalid_argument("Number of columns must match the matrix size.");
                     }
 
-                    data.emplace_back(row.begin(), row.end());
-                }
-
-            }
-            mat(std::vector<std::vector<T>> content) {
-                if (content.size() != matRowsSize) {
-                    throw std::invalid_argument("Number of rows must match the matrix size.");
-                }
-
-                for (const auto& row : content) {
-                    if (row.size() != matColsSize) {
-                        throw std::invalid_argument("Number of columns must match the matrix size.");
+                    size_t j = 0;
+                    for (const auto& value : row) {
+                        data[i][j] = value;
+                        j++;
                     }
+                    i++;
                 }
 
-                data = std::move(content);
             }
 
             size_t  RowsSize() const noexcept  {
@@ -85,33 +80,27 @@ namespace pml {
                     throw std::invalid_argument("Number of rows must match the matrix size.");
                 }
 
-                std::vector<std::vector<T>> newData;
-                newData.reserve(matRowsSize);
+                T newData[matRowsSize][matColsSize];
 
+                size_t i = 0;
                 for (const auto& row : content) {
                     if (row.size() != matColsSize) {
                         throw std::invalid_argument("Number of columns must match the matrix size.");
                     }
-                    newData.emplace_back(row.begin(), row.end());
+
+                    size_t j = 0;
+                    for (const auto& value : row){
+                        newData[i][j] = value;
+                        j++;
+                    }
+                    i++;
                 }
 
-                data = std::move(newData);
-
-                return *this;
-            }
-
-            mat& operator=(std::vector<std::vector<T>> content) {
-                if (content.size() != matRowsSize) {
-                    throw std::invalid_argument("Number of rows must match the matrix size.");
-                }
-
-                for (const auto& row : content) {
-                    if (row.size() != matColsSize) {
-                        throw std::invalid_argument("Number of columns must match the matrix size.");
+                for (size_t o = 0; o < matRowsSize; o++) {
+                    for (size_t p = 0; p < matColsSize; p++) {
+                        data[o][p] = newData[o][p];
                     }
                 }
-
-                data = std::move(content);
 
                 return *this;
             }
@@ -168,42 +157,49 @@ namespace pml {
 
     // -- operator overloads
 
-    template <Limit T, std::size_t matRowsSize, std::size_t matColsSize>
+    template <Limit T, size_t matRowsSize, size_t matColsSize>
     mat<T, matRowsSize, matColsSize> operator+(T scalar, const mat<T, matRowsSize, matColsSize>& m) {
         return m + scalar;
     }
 
-    template <Limit T, std::size_t matRowsSize, std::size_t matColsSize>
+    template <Limit T, size_t matRowsSize, size_t matColsSize>
     mat<T, matRowsSize, matColsSize> operator-(T scalar, const mat<T, matRowsSize, matColsSize>& m) {
         return m - scalar;
     }
 
-    template <Limit T, std::size_t matRowsSize, std::size_t matColsSize>
+    template <Limit T, size_t matRowsSize, size_t matColsSize>
     mat<T, matRowsSize, matColsSize> operator*(T scalar, const mat<T, matRowsSize, matColsSize>& m) {
         return m * scalar;
     }
 
     // -- functions for matrix operations
 
-    template <Limit T, std::size_t matRowsSize, std::size_t matColsSize>
-    mat<T, matRowsSize, matColsSize> linear_combination(const std::vector<mat<T, matRowsSize, matColsSize>>& matrices, const std::vector<T>& scalars) {
-        if (matrices.size() != scalars.size()) {
-            throw std::invalid_argument("Number of matrices and scalars must match.");
-        }
-
+    template <Limit T, size_t matRowsSize, size_t matColsSize, size_t length>
+    mat<T, matRowsSize, matColsSize> linear_combination(const mat<T, matRowsSize, matColsSize> (&matrices)[length], const T (&scalars)[length]) {
         mat<T, matRowsSize, matColsSize> result;
-        for (size_t i = 0; i < matrices.size(); i++) {
+        for (size_t i = 0; i < length; i++) {
             result += matrices[i] * scalars[i];
         }
 
         return result;
     }
 
-    template <Limit T, std::size_t matRowsSize, std::size_t matColsSize>
+    template <Limit T, size_t matRowsSize, size_t matColsSize>
     mat<T, matRowsSize, matColsSize> lerp(const mat<T, matRowsSize, matColsSize>& m1, const mat<T, matRowsSize, matColsSize>& m2, T scalar) {
         mat<T, matRowsSize, matColsSize> result;
         result = m1 + scalar * (m2 - m1);
 
+        return result;
+    }
+
+    template <Limit T, size_t matRowsSize, size_t matColsSize>
+    T dot(const mat<T, matRowsSize, matColsSize>& m1, const mat<T, matRowsSize, matColsSize>& m2) {
+        T result = static_cast<T>(0);
+        for (size_t i = 0; i < matRowsSize; i++) {
+            for (size_t j = 0; j < matColsSize; j++) {
+                result += m1.data[i][j] * m2.data[i][j];
+            }
+        }
         return result;
     }
 }

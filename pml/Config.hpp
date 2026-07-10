@@ -1,7 +1,7 @@
 #pragma once
 
 # include <concepts>
-# include <vector>
+// # include <vector>
 # include <iostream>
 
 # include <array>
