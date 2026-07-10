@@ -48,7 +48,24 @@ namespace pml {
                 }
             }
 
+            T dot(const vec<T, vecSize>& other) const {
+                T result = static_cast<T>(0);
+                for (size_t i = 0; i < vecSize; i++) {
+                    result += data[i] * other.data[i];
+                }
+                return result;
+            }
+
             // -- operator overloads
+
+            bool operator==(const vec &other) const {
+                for (size_t i = 0; i < vecSize; i++) {
+                    if (data[i] != other.data[i]) {
+                        return false;
+                    }
+                }
+                return true;
+            }
 
             vec& operator=(std::initializer_list<T> content) {
                 if (content.size() != vecSize) {
@@ -147,10 +164,6 @@ namespace pml {
 
     template <Limit T, size_t vecSize>
     T dot(const vec<T, vecSize>& v1, const vec<T, vecSize>& v2) {
-        T result = static_cast<T>(0);
-        for (size_t i = 0; i < vecSize; i++) {
-            result += v1.data[i] * v2.data[i];
-        }
-        return result;
+        return v1.dot(v2);
     }
 }

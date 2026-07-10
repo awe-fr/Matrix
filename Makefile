@@ -4,7 +4,7 @@ SOURCES = main.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 
-INCLUDES = -Ipml
+INCLUDES = -Ipml -Idoctest
 
 COMPILER = c++ -std=c++20
 

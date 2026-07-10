@@ -74,7 +74,29 @@ namespace pml {
                 }
             }
 
+            T dot(const mat<T, matRowsSize, matColsSize>& other) const {
+                T result = static_cast<T>(0);
+                for (size_t i = 0; i < matRowsSize; i++) {
+                    for (size_t j = 0; j < matColsSize; j++) {
+                        result += data[i][j] * other.data[i][j];
+                    }
+                }
+                return result;
+            }
+
             // -- operator overloads
+
+            bool operator==(const mat &other) const {
+                for (size_t i = 0; i < matRowsSize; i++) {
+                    for (size_t j = 0; j < matColsSize; j++) {
+                        if (data[i][j] != other.data[i][j]) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+
             mat& operator=(std::initializer_list<std::initializer_list<T>> content) {
                 if (content.size() != matRowsSize) {
                     throw std::invalid_argument("Number of rows must match the matrix size.");
@@ -194,12 +216,6 @@ namespace pml {
 
     template <Limit T, size_t matRowsSize, size_t matColsSize>
     T dot(const mat<T, matRowsSize, matColsSize>& m1, const mat<T, matRowsSize, matColsSize>& m2) {
-        T result = static_cast<T>(0);
-        for (size_t i = 0; i < matRowsSize; i++) {
-            for (size_t j = 0; j < matColsSize; j++) {
-                result += m1.data[i][j] * m2.data[i][j];
-            }
-        }
-        return result;
+        return m1.dot(m2);
     }
 }

@@ -1,156 +1,163 @@
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+
 #include <Vector.hpp>
 #include <Matrix.hpp>
+#include <doctest.h>
 #include <iostream>
 
-void    ex00() {
-    std::cout << "|| ---------- Ex 00 ---------- ||" << std::endl;
-    std::cout << "        -> Addition" << std::endl << std::endl;
+TEST_CASE("Exercise 00 - Add, Subtract and Scale") {
 
-    pml::vec<int, 3> v1 = {1, 2, 3};
-    pml::vec<int, 3> v2 = {4, 5, 6};
+    SUBCASE("vec addition") {
+        pml::vec<int, 3> v1 = {1, 2, 3};
+        pml::vec<int, 3> v2 = {4, 5, 6};
+        pml::vec<int, 3> expected = {5, 7, 9};
 
-    pml::mat<int, 2, 3> m1 = {{1, 2, 3}, {4, 5, 6}};
-    pml::mat<int, 2, 3> m2 = {{7, 8, 9}, {10, 11, 12}};
+        CHECK(v1 + v2 == expected);
 
-    std::cout << "v1: " << v1 << std::endl << "v2: " << v2 << std::endl << std::endl;
+        v1 += v2;
+        CHECK(v1 == expected);
+    }
 
-    std::cout << "v1 + v2: " << v1 + v2 << std::endl;
-    v1 += v2;
-    std::cout << "v1 += v2: " << v1 << std::endl;
+    SUBCASE("vec subtraction") {
+        pml::vec<int, 3> v1 = {1, 2, 3};
+        pml::vec<int, 3> v2 = {4, 5, 6};
+        pml::vec<int, 3> expected = {-3, -3, -3};
 
-    std::cout << std::endl;
+        CHECK(v1 - v2 == expected);
 
-    std::cout << "m1: " << std::endl << m1 << std::endl << std::endl;
-    std::cout << "m2: " << std::endl << m2 << std::endl << std::endl;
+        v1 -= v2;
+        CHECK(v1 == expected);
+    }
 
-    std::cout << "m1 + m2: " << std::endl << m1 + m2 << std::endl;
-    m1 += m2;
-    std::cout << "m1 += m2: " << std::endl << m1 << std::endl;
+    SUBCASE("vec scalar multiplication") {
+        pml::vec<int, 3> v1 = {1, 2, 3};
+        int scalar = 2;
+        pml::vec<int, 3> expected = {2, 4, 6};
 
-    std::cout << std::endl;
+        CHECK(v1 * scalar == expected);
 
-    std::cout << "        -> subtraction" << std::endl << std::endl;
+        v1 *= scalar;
+        CHECK(v1 == expected);
+    }
 
-    std::cout << "v1: " << v1 << std::endl << "v2: " << v2 << std::endl << std::endl;
+    SUBCASE("mat addition") {
+        pml::mat<int, 2, 3> m1 = {{1, 2, 3}, {4, 5, 6}};
+        pml::mat<int, 2, 3> m2 = {{7, 8, 9}, {10, 11, 12}};
+        pml::mat<int, 2, 3> expected = {{8, 10, 12}, {14, 16, 18}};
 
-    std::cout << "v1 - v2: " << v1 - v2 << std::endl;
-    v1 -= v2;
-    std::cout << "v1 -= v2: " << v1 << std::endl;
+        CHECK(m1 + m2 == expected);
 
-    std::cout << std::endl;
+        m1 += m2;
+        CHECK(m1 == expected);
+    }
 
-    std::cout << "m1: " << std::endl << m1 << std::endl << std::endl;
-    std::cout << "m2: " << std::endl << m2 << std::endl << std::endl;
+    SUBCASE("mat subtraction") {
+        pml::mat<int, 2, 3> m1 = {{1, 2, 3}, {4, 5, 6}};
+        pml::mat<int, 2, 3> m2 = {{7, 8, 9}, {10, 11, 12}};
+        pml::mat<int, 2, 3> expected = {{-6, -6, -6}, {-6, -6, -6}};
 
-    std::cout << "m1 - m2: " << std::endl << m1 - m2 << std::endl;
-    m1 -= m2;
-    std::cout << "m1 -= m2: " << std::endl << m1 << std::endl;
+        CHECK(m1 - m2 == expected);
 
-    std::cout << std::endl;
+        m1 -= m2;
+        CHECK(m1 == expected);
+    }
 
-    std::cout << "        -> scalar multiplication" << std::endl << std::endl;
+    SUBCASE("mat scalar multiplication") {
+        pml::mat<int, 2, 3> m1 = {{1, 2, 3}, {4, 5, 6}};
+        int scalar = 2;
+        pml::mat<int, 2, 3> expected = {{2, 4, 6}, {8, 10, 12}};
 
-    int scalar = 2;
+        CHECK(m1 * scalar == expected);
 
-    std::cout << "v1: " << v1 << std::endl << "scalar: " << scalar << std::endl << std::endl;
-
-    std::cout << "v1 * scalar: " << v1 * scalar << std::endl;
-    v1 *= scalar;
-    std::cout << "v1 *= scalar: " << v1 << std::endl;
-    
-    std::cout << std::endl;
-
-    std::cout << "m1: " << std::endl << m1 << std::endl << std::endl;
-
-    std::cout << "m1 * scalar " << std::endl << m1 * scalar << std::endl;
-    m1 *= scalar;
-    std::cout << "m1 *= scalar: " << std::endl << m1 << std::endl;
+        m1 *= scalar;
+        CHECK(m1 == expected);
+    }
 }
 
-void ex01() {
-    std::cout << "|| ---------- Ex 01 ---------- ||" << std::endl;
-    std::cout << "        -> Linear Combination" << std::endl << std::endl;
+TEST_CASE("Exercise 01 - Linear combination") {
 
-    pml::vec<int, 3> v1 = {1, 2, 3};
-    pml::vec<int, 3> v2 = {4, 5, 6};
-    pml::vec<int, 3> v3 = {7, 8, 9};
-    pml::vec<int, 3> vectors[3] = {v1, v2, v3};
-    std::cout << "V1: " << v1 << std::endl;
-    std::cout << "V2: " << v2 << std::endl;
-    std::cout << "V3: " << v3 << std::endl;
+    SUBCASE("vec linear combination") {
+        pml::vec<int, 3> v1 = {1, 2, 3};
+        pml::vec<int, 3> v2 = {4, 5, 6};
+        pml::vec<int, 3> v3 = {7, 8, 9};
+        pml::vec<int, 3> vectors[3] = {v1, v2, v3};
 
-    int scalars[3] = {2, -1, 3};
-    std::cout << "Scalars: " << scalars[0] << " " << scalars[1] << " " << scalars[2] << std::endl;
+        int scalars[3] = {2, -1, 3};
 
-    pml::vec<int, 3> result = pml::linear_combination(vectors, scalars);
+        // 2*v1 - v2 + 3*v3 = (19, 23, 27)
+        pml::vec<int, 3> expected = {19, 23, 27};
 
-    std::cout << std::endl << std::endl;
+        pml::vec<int, 3> result = pml::linear_combination(vectors, scalars);
 
-    std::cout << "Result of linear combination: " << result << std::endl;
+        CHECK(result == expected);
+    }
 
-    std::cout << std::endl;
+    SUBCASE("mat linear combination") {
+        pml::mat<int, 2, 3> m1 = {{1, 2, 3}, {4, 5, 6}};
+        pml::mat<int, 2, 3> m2 = {{7, 8, 9}, {10, 11, 12}};
+        pml::mat<int, 2, 3> m3 = {{13, 14, 15}, {16, 17, 18}};
+        pml::mat<int, 2, 3> matrices[3] = {m1, m2, m3};
 
-    pml::mat<int, 2, 3> m1 = {{1, 2, 3}, {4, 5, 6}};
-    pml::mat<int, 2, 3> m2 = {{7, 8, 9}, {10, 11, 12}};
-    pml::mat<int, 2, 3> m3 = {{13, 14, 15}, {16, 17, 18}};
-    pml::mat<int, 2, 3> matrices[3] = {m1, m2, m3};
-    std::cout << "M1: " << std::endl << m1 << std::endl;
-    std::cout << "M2: " << std::endl << m2 << std::endl;
-    std::cout << "M3: " << std::endl << m3 << std::endl;
+        int scalars[3] = {2, -1, 3};
 
-    int matrixScalars[3] = {2, -1, 3};
-    std::cout << "Scalars: " << matrixScalars[0] << " " << matrixScalars[1] << " " << matrixScalars[2] << std::endl;
+        // 2*m1 - m2 + 3*m3
+        pml::mat<int, 2, 3> expected = {{34, 38, 42}, {46, 50, 54}};
 
-    pml::mat<int, 2, 3> matrixResult = pml::linear_combination(matrices, matrixScalars);
+        pml::mat<int, 2, 3> result = pml::linear_combination(matrices, scalars);
 
-    std::cout << std::endl << std::endl;
-
-    std::cout << "Result of linear combination: " << std::endl << matrixResult << std::endl;
+        CHECK(result == expected);
+    }
 }
 
-void ex02() {
-    std::cout << "|| ---------- Ex 02 ---------- ||" << std::endl;
-    std::cout << "        -> Linear Interpolation" << std::endl << std::endl;
+TEST_CASE("Exercise 02 - Linear interpolation") {
 
-    pml::vec<float, 3> v1 = {1, 2, 3};
-    pml::vec<float, 3> v2 = {4, 5, 6};
+    SUBCASE("vec lerp") {
+        pml::vec<float, 3> v1 = {1, 2, 3};
+        pml::vec<float, 3> v2 = {4, 5, 6};
+        float scalar = 0.5f;
 
-    float scalar = 0.5f;
+        // v1 + (v2 - v1) * 0.5
+        pml::vec<float, 3> result = pml::lerp(v1, v2, scalar);
 
-    std::cout << "V1: " << v1 << std::endl;
-    std::cout << "V2: " << v2 << std::endl;
-    std::cout << "Scalar: " << scalar << std::endl;
+        CHECK(result.data[0] == doctest::Approx(2.5f));
+        CHECK(result.data[1] == doctest::Approx(3.5f));
+        CHECK(result.data[2] == doctest::Approx(4.5f));
+    }
 
-    pml::vec<float, 3> result = pml::lerp(v1, v2, scalar);
+    SUBCASE("mat lerp") {
+        pml::mat<float, 2, 3> m1 = {{1, 2, 3}, {4, 5, 6}};
+        pml::mat<float, 2, 3> m2 = {{7, 8, 9}, {10, 11, 12}};
+        float scalar = 0.5f;
 
-    std::cout << std::endl;
+        pml::mat<float, 2, 3> result = pml::lerp(m1, m2, scalar);
 
-    std::cout << "Result of linear interpolation: " << result << std::endl;
-
-    std::cout << std::endl;
-
-    pml::mat<float, 2, 3> m1 = {{1, 2, 3}, {4, 5, 6}};
-    pml::mat<float, 2, 3> m2 = {{7, 8, 9}, {10, 11, 12}};
-
-    std::cout << "M1: " << std::endl << m1 << std::endl;
-    std::cout << "M2: " << std::endl << m2 << std::endl;
-    std::cout << "Scalar: " << scalar << std::endl;
-
-    pml::mat<float, 2, 3> matrixResult = pml::lerp(m1, m2, scalar);
-
-    std::cout << std::endl;
-
-    std::cout << "Result of linear interpolation: " << std::endl << matrixResult << std::endl;
-}   
-
-int main() {
-    ex00();
-    std::cout << std::endl;
-    ex01();
-    std::cout << std::endl;
-    ex02();
-    std::cout << std::endl;
-
-    return 0;
+        CHECK(result.data[0][0] == doctest::Approx(4.0f));
+        CHECK(result.data[0][1] == doctest::Approx(5.0f));
+        CHECK(result.data[0][2] == doctest::Approx(6.0f));
+        CHECK(result.data[1][0] == doctest::Approx(7.0f));
+        CHECK(result.data[1][1] == doctest::Approx(8.0f));
+        CHECK(result.data[1][2] == doctest::Approx(9.0f));
+    }
 }
 
+TEST_CASE("Exercise 03 - Dot product") {
+    SUBCASE("vec dot product") {
+        pml::vec<float, 3> v1 = {1, 2, 3};
+        pml::vec<float, 3> v2 = {4, 5, 6};
+
+        float result1 = v1.dot(v2);
+        float result2 = pml::dot(v1, v2);
+
+        CHECK(result1 == doctest::Approx(32.0f));
+        CHECK(result2 == doctest::Approx(32.0f));
+    }
+
+    SUBCASE("mat dot product") {
+        pml::mat<float, 2, 3> m1 = {{1, 2, 3}, {4, 5, 6}};
+        pml::mat<float, 2, 3> m2 = {{7, 8, 9}, {10, 11, 12}};
+
+        float result = m1.dot(m2);
+
+        CHECK(result == doctest::Approx(217.0f));
+    }
+}
