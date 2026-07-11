@@ -55,6 +55,33 @@ namespace pml {
                 }
                 return result;
             }
+            
+            T norm_1() const {
+                T result = static_cast<T>(0);
+                for (size_t i = 0; i < vecSize; i++) {
+                    result += std::max(data[i], -data[i]);
+                }
+                return result;
+            }
+
+            T norm() const {
+                T result = static_cast<T>(0);
+                for (size_t i = 0; i < vecSize; i++) {
+                    result += data[i] * data[i];
+                }
+                result = std::pow(result, static_cast<T>(0.5));
+                return result;
+            }
+
+            T norm_inf() const {
+                T result = static_cast<T>(0);
+                for (size_t i = 0; i < vecSize; i++) {
+                    T tmp = data[i];
+                    tmp = std::max(tmp, -tmp);
+                    result = std::max(result, tmp);
+                }
+                return result;
+            }
 
             // -- operator overloads
 
@@ -165,5 +192,20 @@ namespace pml {
     template <Limit T, size_t vecSize>
     T dot(const vec<T, vecSize>& v1, const vec<T, vecSize>& v2) {
         return v1.dot(v2);
+    }
+
+    template <Limit T, size_t vecSize>
+    T norm_1(const vec<T, vecSize>& v) {
+        return v.norm_1();
+    }
+
+    template <Limit T, size_t vecSize>
+    T norm(const vec<T, vecSize>& v) {
+        return v.norm();
+    }
+
+    template <Limit T, size_t vecSize>
+    T norm_inf(const vec<T, vecSize>& v) {
+        return v.norm_inf();
     }
 }

@@ -1,8 +1,9 @@
 #pragma once
 
+# include <algorithm>
 # include <concepts>
-// # include <vector>
 # include <iostream>
+# include <cmath>
 
 # include <array>
 

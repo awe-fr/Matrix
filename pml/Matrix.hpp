@@ -84,6 +84,38 @@ namespace pml {
                 return result;
             }
 
+            T norm_1() const {
+                T result = static_cast<T>(0);
+                for (size_t i = 0; i < matRowsSize; i++) {
+                    for (size_t j = 0; j < matColsSize; j++) {
+                        result += std::max(data[i][j], -data[i][j]);
+                    }
+                }
+                return result;
+            }
+
+            T norm() const {
+                T result = static_cast<T>(0);
+                for (size_t i = 0; i < matRowsSize; i++) {
+                    for (size_t j = 0; j < matColsSize; j++) {
+                        result += data[i][j] * data[i][j];
+                    }
+                }
+                result = std::pow(result, static_cast<T>(0.5));
+                return result;
+            }
+
+            T norm_inf() const {
+                T result = static_cast<T>(0);
+                for (size_t i = 0; i < matRowsSize; i++) {
+                    for (size_t j = 0; j < matColsSize; j++) {
+                        T tmp = data[i][j];
+                        tmp = std::max(tmp, -tmp);
+                        result = std::max(result, tmp);
+                    }
+                }
+                return result;
+            }
             // -- operator overloads
 
             bool operator==(const mat &other) const {
@@ -217,5 +249,20 @@ namespace pml {
     template <Limit T, size_t matRowsSize, size_t matColsSize>
     T dot(const mat<T, matRowsSize, matColsSize>& m1, const mat<T, matRowsSize, matColsSize>& m2) {
         return m1.dot(m2);
+    }
+
+    template <Limit T, size_t matRowsSize, size_t matColsSize>
+    T norm_1(const mat<T, matRowsSize, matColsSize>& m) {
+        return m.norm_1();
+    }
+
+    template <Limit T, size_t matRowsSize, size_t matColsSize>
+    T norm(const mat<T, matRowsSize, matColsSize>& m) {
+        return m.norm();
+    }
+
+    template <Limit T, size_t matRowsSize, size_t matColsSize>
+    T norm_inf(const mat<T, matRowsSize, matColsSize>& m) {
+        return m.norm_inf();
     }
 }

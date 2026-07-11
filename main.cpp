@@ -142,8 +142,8 @@ TEST_CASE("Exercise 02 - Linear interpolation") {
 
 TEST_CASE("Exercise 03 - Dot product") {
     SUBCASE("vec dot product") {
-        pml::vec<float, 3> v1 = {1, 2, 3};
-        pml::vec<float, 3> v2 = {4, 5, 6};
+        pml::vec<float, 3> v1 = {1.0f, 2.0f, 3.0f};
+        pml::vec<float, 3> v2 = {4.0f, 5.0f, 6.0f};
 
         float result1 = v1.dot(v2);
         float result2 = pml::dot(v1, v2);
@@ -153,11 +153,37 @@ TEST_CASE("Exercise 03 - Dot product") {
     }
 
     SUBCASE("mat dot product") {
-        pml::mat<float, 2, 3> m1 = {{1, 2, 3}, {4, 5, 6}};
-        pml::mat<float, 2, 3> m2 = {{7, 8, 9}, {10, 11, 12}};
+        pml::mat<float, 2, 3> m1 = {{1.0f, 2.0f, 3.0f}, {4.0f, 5.0f, 6.0f}};
+        pml::mat<float, 2, 3> m2 = {{7.0f, 8.0f, 9.0f}, {10.0f, 11.0f, 12.0f}};
 
         float result = m1.dot(m2);
 
         CHECK(result == doctest::Approx(217.0f));
+    }
+}
+
+TEST_CASE("Exercise 04 - Norm") {
+    SUBCASE("vec norm") {
+        pml::vec<float, 3> v1 = {1.0f, 2.0f, 3.0f};
+
+        CHECK(v1.norm_1() == doctest::Approx(6.0f));
+        CHECK(v1.norm() == doctest::Approx(3.74165738677f));
+        CHECK(v1.norm_inf() == doctest::Approx(3.0f));
+
+        CHECK(pml::norm_1(v1) == doctest::Approx(6.0f));
+        CHECK(pml::norm(v1) == doctest::Approx(3.74165738677f));
+        CHECK(pml::norm_inf(v1) == doctest::Approx(3.0f));
+    }
+
+    SUBCASE("mat norm") {
+        pml::mat<float, 2, 3> m1 = {{1.0f, 2.0f, 3.0f}, {4.0f, 5.0f, 6.0f}};
+
+        CHECK(m1.norm_1() == doctest::Approx(21.0f));
+        CHECK(m1.norm() == doctest::Approx(9.5394f));
+        CHECK(m1.norm_inf() == doctest::Approx(6.0f));
+
+        CHECK(pml::norm_1(m1) == doctest::Approx(21.0f));
+        CHECK(pml::norm(m1) == doctest::Approx(9.5394f));
+        CHECK(pml::norm_inf(m1) == doctest::Approx(6.0f));
     }
 }
