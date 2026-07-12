@@ -74,48 +74,53 @@ namespace pml {
                 }
             }
 
-            T dot(const mat<T, matRowsSize, matColsSize>& other) const {
-                T result = static_cast<T>(0);
+            vec<T, matRowsSize> mul_vec(const vec<T, matColsSize>& v) const {
+                vec<T, matRowsSize> result;
                 for (size_t i = 0; i < matRowsSize; i++) {
                     for (size_t j = 0; j < matColsSize; j++) {
-                        result += data[i][j] * other.data[i][j];
+                        result.data[i] += data[i][j] * v.data[j];
                     }
                 }
                 return result;
             }
 
-            T norm_1() const {
-                T result = static_cast<T>(0);
+            template <size_t otherColsSize>
+            mat<T, matRowsSize, otherColsSize> mul_mat(const mat<T, matColsSize, otherColsSize>& other) const {
+                mat<T, matRowsSize, otherColsSize> result;
                 for (size_t i = 0; i < matRowsSize; i++) {
-                    for (size_t j = 0; j < matColsSize; j++) {
-                        result += std::max(data[i][j], -data[i][j]);
+                    for (size_t j = 0; j < otherColsSize; j++) {
+                        for (size_t k = 0; k < matColsSize; k++) {
+                            result.data[i][j] += data[i][k] * other.data[k][j];
+                        }
                     }
                 }
                 return result;
             }
 
-            T norm() const {
+            T trace() const {
                 T result = static_cast<T>(0);
-                for (size_t i = 0; i < matRowsSize; i++) {
-                    for (size_t j = 0; j < matColsSize; j++) {
-                        result += data[i][j] * data[i][j];
-                    }
+                size_t minSize = 0;
+                if (matRowsSize < matColsSize) {
+                    minSize = matRowsSize;
+                } else {
+                    minSize = matColsSize;
                 }
-                result = std::pow(result, static_cast<T>(0.5));
+                for (size_t i = 0; i < minSize; i++) {
+                    result += data[i][i];
+                }
                 return result;
             }
 
-            T norm_inf() const {
-                T result = static_cast<T>(0);
+            mat<T, matColsSize, matRowsSize> transpose() const {
+                mat<T, matColsSize, matRowsSize> result;
                 for (size_t i = 0; i < matRowsSize; i++) {
                     for (size_t j = 0; j < matColsSize; j++) {
-                        T tmp = data[i][j];
-                        tmp = std::max(tmp, -tmp);
-                        result = std::max(result, tmp);
+                        result.data[j][i] = data[i][j];
                     }
                 }
                 return result;
             }
+
             // -- operator overloads
 
             bool operator==(const mat &other) const {
@@ -192,6 +197,15 @@ namespace pml {
                 return *this;
             }
 
+            vec<T, matRowsSize> operator*(const vec<T, matColsSize>& v) const {
+                return mul_vec(v);
+            }
+
+            template <size_t otherColsSize>
+            mat<T, matRowsSize, otherColsSize> operator*(const mat<T, matColsSize, otherColsSize>& other) const {
+                return mul_mat(other);
+            }
+
             friend std::ostream& operator<<(std::ostream& os, const pml::mat<T, matRowsSize, matColsSize>& tp) {
                 for (size_t j = 0; j < matColsSize; j++) {
                     if (j != 0) {
@@ -228,41 +242,11 @@ namespace pml {
 
     // -- functions for matrix operations
 
-    template <Limit T, size_t matRowsSize, size_t matColsSize, size_t length>
-    mat<T, matRowsSize, matColsSize> linear_combination(const mat<T, matRowsSize, matColsSize> (&matrices)[length], const T (&scalars)[length]) {
-        mat<T, matRowsSize, matColsSize> result;
-        for (size_t i = 0; i < length; i++) {
-            result += matrices[i] * scalars[i];
-        }
-
-        return result;
-    }
-
     template <Limit T, size_t matRowsSize, size_t matColsSize>
     mat<T, matRowsSize, matColsSize> lerp(const mat<T, matRowsSize, matColsSize>& m1, const mat<T, matRowsSize, matColsSize>& m2, T scalar) {
         mat<T, matRowsSize, matColsSize> result;
         result = m1 + scalar * (m2 - m1);
 
         return result;
-    }
-
-    template <Limit T, size_t matRowsSize, size_t matColsSize>
-    T dot(const mat<T, matRowsSize, matColsSize>& m1, const mat<T, matRowsSize, matColsSize>& m2) {
-        return m1.dot(m2);
-    }
-
-    template <Limit T, size_t matRowsSize, size_t matColsSize>
-    T norm_1(const mat<T, matRowsSize, matColsSize>& m) {
-        return m.norm_1();
-    }
-
-    template <Limit T, size_t matRowsSize, size_t matColsSize>
-    T norm(const mat<T, matRowsSize, matColsSize>& m) {
-        return m.norm();
-    }
-
-    template <Limit T, size_t matRowsSize, size_t matColsSize>
-    T norm_inf(const mat<T, matRowsSize, matColsSize>& m) {
-        return m.norm_inf();
     }
 }

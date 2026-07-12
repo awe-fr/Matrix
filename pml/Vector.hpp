@@ -208,4 +208,20 @@ namespace pml {
     T norm_inf(const vec<T, vecSize>& v) {
         return v.norm_inf();
     }
+
+    template <Limit T, size_t vecSize>
+    T angle_cos(const vec<T, vecSize>& v1, const vec<T, vecSize>& v2) {
+        T dot_product = dot(v1, v2);
+        T norm_product = norm(v1) * norm(v2);
+        return dot_product / norm_product;
+    }
+
+    template <Limit T>
+    vec<T, 3> cross_product(const vec<T, 3>& v1, const vec<T, 3>& v2) {
+        vec<T, 3> result;
+        result.data[0] = v1.data[1] * v2.data[2] - v1.data[2] * v2.data[1];
+        result.data[1] = v1.data[2] * v2.data[0] - v1.data[0] * v2.data[2];
+        result.data[2] = v1.data[0] * v2.data[1] - v1.data[1] * v2.data[0];
+        return result;
+    }
 }

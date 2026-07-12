@@ -91,22 +91,6 @@ TEST_CASE("Exercise 01 - Linear combination") {
 
         CHECK(result == expected);
     }
-
-    SUBCASE("mat linear combination") {
-        pml::mat<int, 2, 3> m1 = {{1, 2, 3}, {4, 5, 6}};
-        pml::mat<int, 2, 3> m2 = {{7, 8, 9}, {10, 11, 12}};
-        pml::mat<int, 2, 3> m3 = {{13, 14, 15}, {16, 17, 18}};
-        pml::mat<int, 2, 3> matrices[3] = {m1, m2, m3};
-
-        int scalars[3] = {2, -1, 3};
-
-        // 2*m1 - m2 + 3*m3
-        pml::mat<int, 2, 3> expected = {{34, 38, 42}, {46, 50, 54}};
-
-        pml::mat<int, 2, 3> result = pml::linear_combination(matrices, scalars);
-
-        CHECK(result == expected);
-    }
 }
 
 TEST_CASE("Exercise 02 - Linear interpolation") {
@@ -151,15 +135,6 @@ TEST_CASE("Exercise 03 - Dot product") {
         CHECK(result1 == doctest::Approx(32.0f));
         CHECK(result2 == doctest::Approx(32.0f));
     }
-
-    SUBCASE("mat dot product") {
-        pml::mat<float, 2, 3> m1 = {{1.0f, 2.0f, 3.0f}, {4.0f, 5.0f, 6.0f}};
-        pml::mat<float, 2, 3> m2 = {{7.0f, 8.0f, 9.0f}, {10.0f, 11.0f, 12.0f}};
-
-        float result = m1.dot(m2);
-
-        CHECK(result == doctest::Approx(217.0f));
-    }
 }
 
 TEST_CASE("Exercise 04 - Norm") {
@@ -174,16 +149,75 @@ TEST_CASE("Exercise 04 - Norm") {
         CHECK(pml::norm(v1) == doctest::Approx(3.74165738677f));
         CHECK(pml::norm_inf(v1) == doctest::Approx(3.0f));
     }
+}
 
-    SUBCASE("mat norm") {
-        pml::mat<float, 2, 3> m1 = {{1.0f, 2.0f, 3.0f}, {4.0f, 5.0f, 6.0f}};
+TEST_CASE("Exercise 05 - Cosine") {
+    SUBCASE("vec cosine") {
+        pml::vec<float, 3> v1 = {1.0f, 2.0f, 3.0f};
+        pml::vec<float, 3> v2 = {4.0f, 5.0f, 6.0f};
 
-        CHECK(m1.norm_1() == doctest::Approx(21.0f));
-        CHECK(m1.norm() == doctest::Approx(9.5394f));
-        CHECK(m1.norm_inf() == doctest::Approx(6.0f));
+        float cos_angle = pml::angle_cos(v1, v2);
 
-        CHECK(pml::norm_1(m1) == doctest::Approx(21.0f));
-        CHECK(pml::norm(m1) == doctest::Approx(9.5394f));
-        CHECK(pml::norm_inf(m1) == doctest::Approx(6.0f));
+        CHECK(cos_angle == doctest::Approx(0.974631846f));
+    }
+}
+
+TEST_CASE("Exercise 06 - Cross product") {
+    SUBCASE("vec cross product") {
+        pml::vec<float, 3> v1 = {1.0f, 2.0f, 3.0f};
+        pml::vec<float, 3> v2 = {4.0f, 5.0f, 6.0f};
+
+        pml::vec<float, 3> cross = pml::cross_product(v1, v2);
+
+        CHECK(cross.data[0] == doctest::Approx(-3.0f));
+        CHECK(cross.data[1] == doctest::Approx(6.0f));
+        CHECK(cross.data[2] == doctest::Approx(-3.0f));
+    }
+}
+
+TEST_CASE("Exercise 07 - Linear map, Matrix multiplication") {
+    SUBCASE("mat multiplication with vec") {
+        pml::vec<float, 3> v1 = {2.0f, 1.0f, 0.0f};
+        pml::mat<float, 2, 3> m = {{1.0f, -1.0f, 2.0f}, {0.0f, -3.0f, 1.0f}};
+
+        pml::vec<float, 2> result = m.mul_vec(v1);
+        
+        pml::vec<float, 2> expected = {1.0f, -3.0f};
+
+        CHECK(result == expected);
+        CHECK((m * v1) == expected);
+    }
+
+    SUBCASE("mat multiplication with mat") {
+        pml::mat<float, 4, 3> m1 = {{1.0f, 2.0f, 1.0f}, {0.0f, -1.0f, 1.0f}, {-2.0f, 3.0f, 1.0f}, {1.0f, 1.0f, -1.0f}};
+        pml::mat<float, 3, 2> m2 = {{2.0f, 5.0f}, {-6.0f, 7.0f}, {1.0f, 1.0f}};
+
+        pml::mat<float, 4, 2> result = m1.mul_mat(m2);
+
+        pml::mat<float, 4, 2> expected = {{-9.0f, 20.0f}, {7.0f, -6.0f}, {-21.0f, 12.0f}, {-5.0f, 11.0f}};
+
+        CHECK(result == expected);
+        CHECK((m1 * m2) == expected);
+    }
+}
+
+TEST_CASE("Exercise 08 - Trace") {
+    SUBCASE("mat trace") {
+        pml::mat<float, 3, 3> m = {{1.0f, 2.0f, 3.0f}, {4.0f, 5.0f, 6.0f}, {7.0f, 8.0f, 9.0f}};
+
+        float result = m.trace();
+
+        CHECK(result == doctest::Approx(15.0f));
+    }
+}
+
+TEST_CASE("Exercise 09 - Transpose") {
+    SUBCASE("mat transpose") {
+        pml::mat<float, 2, 3> m = {{1.0f, 2.0f, 3.0f}, {4.0f, 5.0f, 6.0f}};
+
+        pml::mat<float, 3, 2> result = m.transpose();
+        pml::mat<float, 3, 2> expected = {{1.0f, 4.0f}, {2.0f, 5.0f}, {3.0f, 6.0f}};
+
+        CHECK(result == expected);
     }
 }
